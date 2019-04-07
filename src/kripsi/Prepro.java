@@ -45,4 +45,19 @@ public class Prepro {
         }
         return hasil;
     }
+    
+    public ArrayList<String> getStemming(String[] tokens){
+        ArrayList<String> hasil=new ArrayList<String>();
+        for(String token:tokens){
+            int a=0;
+            for(String stop:this.stopWords){
+                if(stop.equals(token)){
+                    a++;
+                    break;
+                }
+            }
+            if(a<1) hasil.add(token);
+        }
+        return hasil;
+    }
 }

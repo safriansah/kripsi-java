@@ -7,6 +7,8 @@ package kripsi;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
@@ -19,6 +21,18 @@ public class Kripsi {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Koneksi koneksi=new Koneksi();
+        ArrayList<Berita> beritaList=new ArrayList<Berita>();
+        beritaList=koneksi.getBeritaList();
+        if(koneksi.isKataDasar("ada"))System.out.println("katadasar");
+        
+        /*
+        for(Berita berita: beritaList){
+            System.out.println(berita.getJudul());
+            System.out.println(berita.getIsi());
+            System.out.println(berita.getKategori());
+            System.out.println("");
+        }
         Prepro pre=new Prepro();
         ArrayList<String> tokens = new ArrayList<String>(); 
         String isi="Galaxy M20 adalah andalan baru Samsung untuk pasaran ponsel papan tengah di Indonesia yang baru saja diresmikan kehadirannya awal pekan ini.";
@@ -91,7 +105,6 @@ public class Kripsi {
             }
         System.out.println();
         svd.dot(w, vektor);
-        /*
         for(double[] xi: x2){
             j=1;
             for(double[] xj:x2){

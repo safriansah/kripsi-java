@@ -6,20 +6,22 @@
 package kripsi;
 
 import java.util.ArrayList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
  * @author safriansah
  */
 public class Berita {
-    String judul, isi;
+    String judul, isi, kategori;
     ArrayList<String> tokens = new ArrayList<String>(); 
 
-    public Berita(String judul, String isi) {
+    public Berita(String judul, String isi, String kategori) {
         this.judul = judul;
         this.isi = isi;
+        this.kategori = kategori;
     }
-    
 
     public void setJudul(String judul) {
         this.judul = judul;
@@ -38,11 +40,28 @@ public class Berita {
     }
 
     public String getIsi() {
-        return isi;
+        Document doc = Jsoup.parse(isi);
+        return doc.text();
     }
 
     public ArrayList<String> getToken() {
         return tokens;
+    }
+
+    public String getKategori() {
+        return kategori;
+    }
+
+    public void setKategori(String kategori) {
+        this.kategori = kategori;
+    }
+
+    public ArrayList<String> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(ArrayList<String> tokens) {
+        this.tokens = tokens;
     }
     
 }
