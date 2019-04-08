@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kripsi;
+package metode;
 
 import java.util.ArrayList;
 
@@ -46,18 +46,108 @@ public class Prepro {
         return hasil;
     }
     
-    public ArrayList<String> getStemming(String[] tokens){
-        ArrayList<String> hasil=new ArrayList<String>();
-        for(String token:tokens){
-            int a=0;
-            for(String stop:this.stopWords){
-                if(stop.equals(token)){
-                    a++;
-                    break;
+    public String getStemming(String token){
+        
+        return token;
+    }
+    
+    public String delPrefix(String token){
+        String aw=token.substring(0, 6);
+        if(aw.equals("memper")) token=token.substring(6);
+        else{
+            aw=token.substring(0, 3);
+            if(aw.equals("ber")) token=token.substring(3);
+            else{
+                aw=token.substring(0, 4);
+                if(aw.equals("bela")) token=token.substring(4);
+                else{
+                    aw=token.substring(0, 2);
+                    if(aw.equals("di")) token=token.substring(2);
+                    else{
+                        aw=token.substring(0, 2);
+                        if(aw.equals("ke")) token=token.substring(2);
+                        else{
+                            aw=token.substring(0, 2);
+                            if(aw.equals("ku")) token=token.substring(2);
+                            else{
+                                aw=token.substring(0, 3);
+                                if(aw.equals("kau")) token=token.substring(3);
+                                else{
+                                    aw=token.substring(0, 2);
+                                    if(aw.equals("me")){
+                                        aw=token.substring(0, 4);
+                                        if(aw.equals("memb")) token=token.substring(3);
+                                        else{
+                                            aw=token.substring(0, 4);
+                                            if(aw.equals("mend") || aw.equals("menf") || aw.equals("menj")) token=token.substring(3);
+                                            else{
+                                                aw=token.substring(0, 4);
+                                                if(aw.equals("meny")) token="s"+token.substring(4);
+                                                else{
+                                                    aw=token.substring(0, 4);
+                                                    if(aw.equals("meng")){
+                                                        if(token.substring(4, 5).equals("a") || token.substring(4, 5).equals("i") || token.substring(4, 5).equals("u") || token.substring(4, 5).equals("e") || token.substring(4, 5).equals("o") || token.substring(4, 5).equals("g") || token.substring(4, 5).equals("h")) token=token.substring(4);
+                                                    }
+                                                    else{
+                                                        aw=token.substring(0, 3);
+                                                        if(aw.equals("men")) token="t"+token.substring(3);
+                                                        else{
+                                                            if(token.substring(2, 3).equals("l") || token.substring(2, 3).equals("m") || token.substring(2, 3).equals("r")) token=token.substring(2);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        aw=token.substring(0, 2);
+                                        if(aw.equals("pe")) token=token.substring(2);
+                                        else{
+                                            aw=token.substring(0, 2);
+                                            if(aw.equals("se")) token=token.substring(2);
+                                            else{
+                                                aw=token.substring(0, 3);
+                                                if(aw.equals("ter")) token=token.substring(3);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            if(a<1) hasil.add(token);
         }
-        return hasil;
+        return token;
+    }
+    
+    public String delSuffix(String token){
+        String ak=token.substring(token.length()-3);
+        if(ak.equals("nda")) token=token.substring(0, token.length()-3);
+        else{
+            ak=token.substring(token.length()-3);
+            if(ak.equals("nya")) token=token.substring(0, token.length()-3);
+            else{
+                ak=token.substring(token.length()-3);
+                if(ak.equals("kan") && token.length()>5) token=token.substring(0, token.length()-3);
+                else{
+                    ak=token.substring(token.length()-2);
+                    if(ak.equals("an") && token.length()>5) token=token.substring(0, token.length()-2);
+                    else{
+                        ak=token.substring(token.length()-2);
+                        if(ak.equals("ku") && token.length()>6) token=token.substring(0, token.length()-2);
+                        else{
+                            ak=token.substring(token.length()-2);
+                            if(ak.equals("mu") && token.length()>6) token=token.substring(0, token.length()-2);
+                            else{
+                                ak=token.substring(token.length()-1);
+                                if(ak.equals("i") && token.length()>6) token=token.substring(0, token.length()-1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return token;
     }
 }

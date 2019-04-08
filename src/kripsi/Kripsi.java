@@ -5,8 +5,13 @@
  */
 package kripsi;
 
+import config.Koneksi;
+import metode.Prepro;
+import model.Berita;
+import IndonesianStemmer.IndonesianStemmer;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import metode.TFIDF;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -22,18 +27,55 @@ public class Kripsi {
     public static void main(String[] args) {
         // TODO code application logic here
         Koneksi koneksi=new Koneksi();
+        Prepro pre=new Prepro();
         ArrayList<Berita> beritaList=new ArrayList<Berita>();
         beritaList=koneksi.getBeritaList();
-        if(koneksi.isKataDasar("ada"))System.out.println("katadasar");
+        IndonesianStemmer idnStemming = new IndonesianStemmer();
+        TFIDF tfidf=new TFIDF();
         
-        /*
+        //if(koneksi.isKataDasar("ada"))System.out.println("katadasar");
+        String kata="kepunyaannya";
+        System.out.println(idnStemming.findRootWord(kata));
+        System.out.println(pre.delSuffix(kata));
+        
+        
+        
+        /*ArrayList<String> tokens = new ArrayList<String>();
+        ArrayList<String>[] dok = new ArrayList[4];
+        String[] isi=new String[4];
+        isi[0]="Pihak Samsung tak menampik bahwa harga Samsung Galaxy M20 di Indonesia memang lebih mahal dibandingkan dengan India.";
+        isi[1]="Samsung menaruh harapan besar pada Galaxy M10 dan M20 untuk mengembalikan kedudukannya di India, Indonesia, dan negara-negara berkembang lainnya.";
+        isi[2]="Sejumlah jenis Bahan Bakar Minyak (BBM) non subsidi atau BBM umum mengalami penurunan harga.";
+        isi[3]="Penurunan Harga BBM Salah Satu Indikator Ekonomi Nasional Berhasil.";
+        
+        int no=0;
+        for(String a:isi){
+            tokens.addAll(pre.getPrepro(a));
+            dok[no]=pre.getPrepro(a);
+            no++;
+        }
+        
+        no=1;
+        for(String a:tokens){
+            //System.out.println(no+". "+a);
+            no++;
+        }
+        tfidf.setTerm(tokens);
+        tokens=tfidf.getTerm();
+        no=1;
+        for(String a:tokens){
+            //System.out.println(no+". "+a);
+            no++;
+        }
+        
+        double[][] tf=tfidf.getTFIDF(dok);
         for(Berita berita: beritaList){
             System.out.println(berita.getJudul());
             System.out.println(berita.getIsi());
             System.out.println(berita.getKategori());
             System.out.println("");
         }
-        Prepro pre=new Prepro();
+        
         ArrayList<String> tokens = new ArrayList<String>(); 
         String isi="Galaxy M20 adalah andalan baru Samsung untuk pasaran ponsel papan tengah di Indonesia yang baru saja diresmikan kehadirannya awal pekan ini.";
         tokens=pre.getPrepro(isi);

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kripsi;
+package metode;
 
 /**
  *
  * @author safriansah
  */
-public class SvmKu {
+public class SVM {
     double lamda=1, maxD=0, c=1, d=2, gamma=0.01, epsilon=0.001;
     double[] alpha={ 0, 0, 0, 0 }, deltaAlpha={ 0, 0, 0, 0 }, error={ 0, 0, 0, 0 };
     

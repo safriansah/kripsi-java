@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kripsi;
+package config;
 
+import model.Berita;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -30,7 +31,7 @@ public class Koneksi {
             stm = con.createStatement();
             System.out.println("koneksi berhasil;");
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println("koneksi gagal" +e.getMessage());
+            System.err.println("koneksi gagal: " +e.getMessage());
         }
     }
     
