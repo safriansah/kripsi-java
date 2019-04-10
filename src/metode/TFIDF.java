@@ -34,7 +34,68 @@ public class TFIDF {
         tokens.addAll(set);
         this.term = tokens;
     }
+
+    public void setTfidf(ArrayList<String>[] dok) {
+        int n=dok.length,
+                m=term.size();
+        this.tfidf=new double[m][n];
+        this.tf=new double[m][n];
+        this.idf=new double[m];
+        this.df=new int[m];
+        
+        int i=0, j=0;
+        for(String a:term){
+            df[i]=0;
+            j=0;
+            for(ArrayList<String> d:dok){
+                tf[i][j]=0;
+                for(String b: d){
+                    if(a.equals(b)){
+                        tf[i][j]+=1;
+                    }
+                }
+                if(tf[i][j]>0){
+                    df[i]+=1;
+                }
+                j++;
+            }
+            i++;
+        }
+
+        i=0;
+        for(int a: df){
+            idf[i]=Math.log10(n/a);
+            i++;
+        }
+        
+        i=0;
+        while(i<m){
+            j=0;
+            while(j<n){
+                tfidf[i][j]=tf[i][j]*idf[i];
+                j++;
+            }
+            i++;
+        }
+    }
+
+    public double[][] getTf() {
+        return tf;
+    }
+
+    public double[][] getTfidf() {
+        return tfidf;
+    }
     
+    public double[] getIdf() {
+        return idf;
+    }
+
+    public int[] getDf() {
+        return df;
+    }
+    
+    /*
     public double[][] getTFIDF(ArrayList<String>[] dok){
         int n=dok.length,
                 m=term.size();
@@ -63,36 +124,33 @@ public class TFIDF {
         }
         
         i=0;
+        System.out.println("\n TF :");
         for(String a:term){
             System.out.println("\t "+tf[i][0]+" "+tf[i][1]+" "+tf[i][2]+" "+tf[i][3]);
             i++;
         }
         
+        //System.out.println("\n IDF :");
         i=0;
         for(int a: df){
             idf[i]=Math.log10(n/a);
-            System.out.println("log("+n+"/"+a+")="+idf[i]);
+            //System.out.println("log("+n+"/"+a+")="+idf[i]);
             i++;
         }
         
         i=0;
+        //System.out.println("\n TFIDF :");
         while(i<m){
             j=0;
             while(j<n){
                 tfidf[i][j]=tf[i][j]*idf[i];
                 j++;
             }
-            System.out.println("\t "+tfidf[i][0]+" "+tfidf[i][1]+" "+tfidf[i][2]+" "+tfidf[i][3]);
+            //System.out.println("\t "+tfidf[i][0]+" "+tfidf[i][1]+" "+tfidf[i][2]+" "+tfidf[i][3]);
             i++;
         }
         
-        return tf;
-    }
+        return tfidf;
+    }*/
     
-    public double[][] getTF(ArrayList<String> tokens){
-        int m=tokens.size(),
-                n=term.size();
-        double[][] tf=new double[n][m];
-        return tf;
-    }
 }

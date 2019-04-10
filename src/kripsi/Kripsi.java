@@ -9,11 +9,16 @@ import config.Koneksi;
 import metode.Prepro;
 import model.Berita;
 import IndonesianStemmer.IndonesianStemmer;
+import config.Dictionary;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
+import metode.SVD;
 import metode.TFIDF;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import stemmerindo.Stemmer;
 
 /**
  *
@@ -24,7 +29,7 @@ public class Kripsi {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // TODO code application logic here
         Koneksi koneksi=new Koneksi();
         Prepro pre=new Prepro();
@@ -32,12 +37,46 @@ public class Kripsi {
         beritaList=koneksi.getBeritaList();
         IndonesianStemmer idnStemming = new IndonesianStemmer();
         TFIDF tfidf=new TFIDF();
+        ArrayList<String> tokens=new ArrayList<String>();
+        ArrayList<String>[] dok = new ArrayList[beritaList.size()];
+        for(int i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setTokens(pre.getPrepro(beritaList.get(i).getIsi()));
+            tokens.addAll(beritaList.get(i).getTokens());
+            dok[i]=beritaList.get(i).getTokens();
+        }
+        tfidf.setTerm(tokens);
+        tokens=tfidf.getTerm();
+        int i=1;
         
-        //if(koneksi.isKataDasar("ada"))System.out.println("katadasar");
-        String kata="kepunyaannya";
-        System.out.println(idnStemming.findRootWord(kata));
-        System.out.println(pre.delSuffix(kata));
+        tfidf.setTfidf(dok);
+        double[][] tif=tfidf.getTfidf();
         
+        SVD svd=new SVD(tif);
+        tif=svd.getV();
+        for(i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setSvd(tif[i]);
+        }
+        System.out.println("\nmatrik V:");
+        for (double[] arr : tif) {
+            System.out.println(Arrays.toString(arr));
+        }
+        
+        /*for(String a:tokens){
+            System.out.println(i+". "+a);
+            i++;
+        }
+        for (double[] arr : tif) {
+            System.out.println(Arrays.toString(arr));
+        }
+        if(koneksi.isKataDasar("ada"))System.out.println("katadasar");
+        String kata="menghapus";
+        System.out.println(kata);
+        System.out.println("idstemming\t:"+idnStemming.findRootWord(kata));
+        //System.out.println("buat sendiri\t:"+pre.delSuffix(pre.delSuffix(pre.delPrefix(pre.delPrefix(pre.delPrefix(kata))))));
+        
+        List dictionary = new Dictionary().read().getDictionaryData();
+        Stemmer stemmer = new Stemmer(dictionary);
+        System.out.println("stemeridn\t:" + stemmer.getRootWord(kata));
         
         
         /*ArrayList<String> tokens = new ArrayList<String>();

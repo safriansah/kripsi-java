@@ -15,7 +15,8 @@ import org.jsoup.nodes.Document;
  */
 public class Berita {
     String judul, isi, kategori;
-    ArrayList<String> tokens = new ArrayList<String>(); 
+    ArrayList<String> tokens = new ArrayList<String>();
+    double[] tfidf, svd;
 
     public Berita(String judul, String isi, String kategori) {
         this.judul = judul;
@@ -31,10 +32,6 @@ public class Berita {
         this.isi = isi;
     }
 
-    public void setToken(ArrayList<String> tokens) {
-        this.tokens = tokens;
-    }
-
     public String getJudul() {
         return judul;
     }
@@ -42,10 +39,6 @@ public class Berita {
     public String getIsi() {
         Document doc = Jsoup.parse(isi);
         return doc.text();
-    }
-
-    public ArrayList<String> getToken() {
-        return tokens;
     }
 
     public String getKategori() {
@@ -63,5 +56,20 @@ public class Berita {
     public void setTokens(ArrayList<String> tokens) {
         this.tokens = tokens;
     }
-    
+
+    public double[] getTfidf() {
+        return tfidf;
+    }
+
+    public void setTfidf(double[] tfidf) {
+        this.tfidf = tfidf;
+    }
+
+    public double[] getSvd() {
+        return svd;
+    }
+
+    public void setSvd(double[] svd) {
+        this.svd = svd;
+    }
 }

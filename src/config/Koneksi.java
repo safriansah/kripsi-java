@@ -38,7 +38,7 @@ public class Koneksi {
     public ArrayList<Berita> getBeritaList(){
         ArrayList<Berita> beritaList = new ArrayList<>();
         try{
-            ResultSet srs = stm.executeQuery("SELECT * FROM tb_berita");
+            ResultSet srs = stm.executeQuery("SELECT * FROM tb_berita limit 10");
             while(srs.next()){
                 Berita berita=new Berita(srs.getString("judul"), srs.getString("isi"), srs.getString("kategori"));
                 beritaList.add(berita);
