@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import metode.SVD;
+import metode.SVM;
 import metode.TFIDF;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,12 +36,51 @@ public class Kripsi {
         Koneksi koneksi=new Koneksi();
         Prepro pre=new Prepro();
         ArrayList<Berita> beritaList=new ArrayList<Berita>();
-        beritaList=koneksi.getBeritaList();
         IndonesianStemmer idnStemming = new IndonesianStemmer();
         TFIDF tfidf=new TFIDF();
+        
+        beritaList=koneksi.getBeritaList();
         ArrayList<String> tokens=new ArrayList<String>();
         ArrayList<String>[] dok = new ArrayList[beritaList.size()];
         for(int i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setTokens(pre.getPrepro(beritaList.get(i).getIsi()));
+            tokens.addAll(beritaList.get(i).getTokens());
+            dok[i]=beritaList.get(i).getTokens();
+        }
+        tfidf.setTerm(tokens);
+        tokens=tfidf.getTerm();
+        int i=1;
+        
+        tfidf.setTfidf(dok);
+        double[][] tif=tfidf.getTfidf();
+        
+        SVD svd=new SVD(tif);
+        tif=svd.getV();
+        for(i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setSvd(tif[i]);
+            //System.out.println(Arrays.toString(tif[i]));
+        }
+        
+        bagiDataTraining(beritaList);
+        /*for(i=0; i<data.length; i++){
+            for(j=0; j<data.length; j++){
+                System.out.print(" "+ hessian[i][j]);
+            }
+            System.out.println(" ");
+        }
+        System.out.println("\nmatrik V:");
+        for (Berita arr : beritaList) {
+            System.out.println(Arrays.toString(arr.getSvd()));
+        }
+        Random randomGenerator;
+        randomGenerator = new Random();
+        int index=0;
+        for(int i=0; i<20; i++){
+            index=randomGenerator.nextInt(beritaList.size());
+            System.out.print("\n"+index+" : ");
+            System.out.print(beritaList.get(index).getKategori());
+        }
+        /*for(int i=0; i<beritaList.size(); i++){
             beritaList.get(i).setTokens(pre.getPrepro(beritaList.get(i).getIsi()));
             tokens.addAll(beritaList.get(i).getTokens());
             dok[i]=beritaList.get(i).getTokens();
@@ -271,9 +312,27 @@ public class Kripsi {
         }*/
 
     }
-   
-   
-   
-   
+    
+    public static void bagiDataTraining(ArrayList<Berita> beritaList){
+        String[] kategori={"ekonomi", "olahraga", "teknologi", "entertainment"};
+        ArrayList<Berita>[] training = new ArrayList[kategori.length];
+        int i=0;
+        for(i=0; i<training.length; i++){
+            training[i]=new ArrayList();
+        }
+        for(Berita berita:beritaList){
+            for(i=0; i<kategori.length; i++){
+                if(berita.getKategori().equals(kategori[i])){
+                    training[i].add(berita);
+                }
+            }
+        }
+        for(Berita berita:training[3]){
+            System.out.println(berita.getKategori());
+        }
+        SVM svmku=new SVM();
+        svmku.train(training[0], training[2]);
+        
+    }
     
 }
