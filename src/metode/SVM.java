@@ -14,11 +14,12 @@ import model.Berita;
  * @author safriansah
  */
 public class SVM {
-    double lamda=1, maxD=0, c=1, d=2, gamma=0.01, epsilon=0.001;
-    double[] alpha, deltaAlpha, error;
+    double lamda=1, maxD=0, c=1, d=2, gamma=0.01, epsilon=0.001, maxDeltaAlpha=0, b;
+    double[] alpha, deltaAlpha, error, w;
     double[][] data, kernel, hessian;
     String[] kelas=new String[2];
     int[] y;
+    int maxIterasi=10;
     ArrayList<Berita> dataBerita=new ArrayList();
 
     public SVM() {
@@ -36,6 +37,8 @@ public class SVM {
         Arrays.fill(alpha, 0);
         deltaAlpha=new double[dataBerita.size()];
         Arrays.fill(deltaAlpha, 0);
+        error=new double[dataBerita.size()];
+        w=new double[dataBerita.size()];
         int i;
         for(i=0; i<dataBerita.size(); i++){
             data[i]=dataBerita.get(i).getSvd();
@@ -45,6 +48,15 @@ public class SVM {
         setKernel();
         setHessian();
         setGamma();
+        i=0;
+        while(i<maxIterasi){
+            setError();
+            setDeltaAlpha();
+            if(maxDeltaAlpha<epsilon) break;
+            i++;
+        }
+        setW();
+        setB();
     }
     
     public void setKernel(){
@@ -90,48 +102,79 @@ public class SVM {
     
     public void setGamma(){
         gamma=gamma/maxD;
-        System.out.print(gamma);
     }
     
     public void setError(){
-        //for(int i: data)
+        for(int i=0; i<error.length; i++){
+            error[i]=hitungError(alpha[i], hessian[i]);
+        }
     }
     
-    public void getError(double[] y, int i, double[][] x){
+    public double hitungError(double al, double[] hes){
         double hasil=0;
-        int j=0;
-        for(double[] xj: x){
-            //hasil+=alpha[i]*hitungHessian(y[i], x[i], y[j], xj);
-            //System.out.println(+alpha[i]+" * "+hitungHessian(y[i], x[i], y[j], xj)+" = "+alpha[i]*hitungHessian(y[i], x[i], y[j], xj));
-            j++;
-        }
-        System.out.println(hasil);
-        error[i]=hasil;
-    }
-    
-    public void getDeltaAlpha(){
-        for(int i=0; i<deltaAlpha.length; i++){
-            deltaAlpha[i]=Math.min(Math.max(gamma*(1-error[i]), alpha[i]), c-alpha[i]);
-            //System.out.println(alpha[i]+" + "+deltaAlpha[i]);
-            alpha[i]+=deltaAlpha[i];
-        }
-        for(int i=0; i<deltaAlpha.length; i++){
-            System.out.print("da"+i+" ");
-            System.out.println(deltaAlpha[i]);
-            System.out.print("alpha"+i+" ");
-            System.out.println(alpha[i]);
-        }
-    }
-    
-    public double getMaxDeltaAlpha(){
-        double hasil=0;
-        for(double da:deltaAlpha){
-            hasil=Math.max(da, hasil);
+        for(double d: hes){
+            hasil+=al*d;
         }
         return hasil;
     }
     
-    public double getEpsilon(){
-        return epsilon;
+    public void setDeltaAlpha(){
+        for(int i=0; i<deltaAlpha.length; i++){
+            deltaAlpha[i]=Math.min(Math.max(gamma*(1-error[i]), alpha[i]), c-alpha[i]);
+            alpha[i]+=deltaAlpha[i];
+            maxDeltaAlpha=Math.max(maxDeltaAlpha, deltaAlpha[i]);
+        }
+    }
+    
+    public void setW(){
+        for(int i=0; i<w.length; i++){
+            w[i]=0;
+            for(double k:kernel[i]){
+                w[i]+=alpha[i]*y[i]*k;
+            }
+        }
+    }
+    
+    public void setB(){
+        b=(-0.5)*(perkalianMatrix(w, alphaTertinggi(1)) + perkalianMatrix(w, alphaTertinggi(-1)));
+        //System.out.println(b); 
+    }
+    
+    public double[] alphaTertinggi(int kelas){
+        double[] hasil=new double[kernel.length];
+        double maxAlpha=0;
+        int i=0;
+        for(double[] k:kernel){
+            if(y[i]==kelas){
+                if(maxAlpha<alpha[i]){
+                    maxAlpha=alpha[i];
+                    hasil=k;
+                }
+            }
+            i++;
+        }
+        return hasil;
+    }
+    
+    public double perkalianMatrix(double[] a, double[] b){
+        double hasil=0;
+        for(int i=0; i<a.length; i++){
+            hasil+=a[i]*b[i];
+        }
+        //System.out.println(hasil);
+        return hasil;
+    }
+    
+    public void test(double[] test){
+        double[] testKernel=new double[test.length];
+        int i=0;
+        String hasil;
+        for(i=0; i<data.length; i++){
+            testKernel[i]=hitungKernel(test, data[i]);
+        }
+        System.out.println(Arrays.toString(testKernel));
+        double sign=perkalianMatrix(testKernel, w)+b;
+        if(sign>0) System.out.println(kelas[1]);
+        else System.out.println(kelas[0]);
     }
 }

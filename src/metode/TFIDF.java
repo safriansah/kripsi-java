@@ -95,6 +95,20 @@ public class TFIDF {
         return df;
     }
     
+    public double[] getQueryTfidf(ArrayList<String> tokens){
+        double[] hasil=new double[term.size()];
+        int i=0, j=0;
+        for(String a:term){
+            for(String b: tokens){
+                if(a.equals(b)){
+                    hasil[i]+=1;
+                }
+            }
+            hasil[i]*=idf[i];
+            i++;
+        }
+        return hasil;
+    }
     /*
     public double[][] getTFIDF(ArrayList<String>[] dok){
         int n=dok.length,

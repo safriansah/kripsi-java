@@ -7,6 +7,7 @@ package metode;
 
 import jama.Matrix;
 import jama.SingularValueDecomposition;
+import java.util.Arrays;
 
 /**
  *
@@ -37,5 +38,25 @@ public class SVD {
         return v;
     }
     
+    public double[] getVektorQ(double[] tfidf){
+        double[] hasil=new double[s.length];
+        double[] temp=new double[s.length];
+        int i=0, j=0;
+        for(i=0; i<u[0].length; i++){
+            for(j=0; j<tfidf.length; j++){
+                temp[i]+=tfidf[j]*u[j][i];
+            }
+        }
+        for(i=0; i<s[0].length; i++){
+            for(j=0; j<temp.length; j++){
+                hasil[i]+=temp[j]*s[j][i];
+            }
+        }
+        return hasil;
+    }
     
+    public double hitungPerkalianMatrix(double[] a, double[][] b){
+        double hasil=0;
+        return hasil;
+    }
 }

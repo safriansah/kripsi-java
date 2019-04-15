@@ -60,8 +60,16 @@ public class Kripsi {
             beritaList.get(i).setSvd(tif[i]);
             //System.out.println(Arrays.toString(tif[i]));
         }
-        
-        bagiDataTraining(beritaList);
+        String[] t={    "Galaxy M20 adalah andalan baru Samsung untuk pasaran ponsel papan tengah di Indonesia yang baru saja diresmikan kehadirannya awal pekan ini.", 
+                        "Indonesia Bakal Manfaatkan Minyak Sawit Jadi Bensin dan LPG",
+                        "Huawei Bantah Ponsel Lipat Mate X Dijual Rp 24 Juta di Indonesia"
+                        };
+        String tes=t[2];
+        ArrayList<String> prep=pre.getPrepro(tes);
+        double[] tfi=tfidf.getQueryTfidf(prep);
+        double[] fitur=svd.getVektorQ(tfi);
+        System.out.println(tes);
+        bagiDataTraining(beritaList, fitur);
         /*for(i=0; i<data.length; i++){
             for(j=0; j<data.length; j++){
                 System.out.print(" "+ hessian[i][j]);
@@ -313,7 +321,7 @@ public class Kripsi {
 
     }
     
-    public static void bagiDataTraining(ArrayList<Berita> beritaList){
+    public static void bagiDataTraining(ArrayList<Berita> beritaList, double[] fitur){
         String[] kategori={"ekonomi", "olahraga", "teknologi", "entertainment"};
         ArrayList<Berita>[] training = new ArrayList[kategori.length];
         int i=0;
@@ -327,12 +335,12 @@ public class Kripsi {
                 }
             }
         }
-        for(Berita berita:training[3]){
-            System.out.println(berita.getKategori());
-        }
+        //for(Berita berita:beritaList){
+        //    System.out.println(berita.getKategori());
+        //}
         SVM svmku=new SVM();
         svmku.train(training[0], training[2]);
-        
+        svmku.test(fitur);
     }
     
 }
