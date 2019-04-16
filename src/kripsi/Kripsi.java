@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import metode.MulticlassSVM;
 import metode.SVD;
 import metode.SVM;
 import metode.TFIDF;
@@ -62,14 +63,19 @@ public class Kripsi {
         }
         String[] t={    "Galaxy M20 adalah andalan baru Samsung untuk pasaran ponsel papan tengah di Indonesia yang baru saja diresmikan kehadirannya awal pekan ini.", 
                         "Indonesia Bakal Manfaatkan Minyak Sawit Jadi Bensin dan LPG",
-                        "Huawei Bantah Ponsel Lipat Mate X Dijual Rp 24 Juta di Indonesia"
+                        "Arema Vs Persebaya, Milomir Yakin Singo Edan Juara Piala Presiden 2019",
+                        "dalam pertandingan persebaya dan arema akan bekerjasama untuk merayu samsung menjadi sponsor dan menuntuk samsung unti berjanji supaya tidak akan memakai bahan bakar subsidi lagi"
                         };
-        String tes=t[2];
+        String tes=t[3];
         ArrayList<String> prep=pre.getPrepro(tes);
         double[] tfi=tfidf.getQueryTfidf(prep);
         double[] fitur=svd.getVektorQ(tfi);
         System.out.println(tes);
-        bagiDataTraining(beritaList, fitur);
+        
+        MulticlassSVM multi=new MulticlassSVM();
+        multi.train(beritaList);
+        multi.test(fitur);
+        //bagiDataTraining(beritaList, fitur);
         /*for(i=0; i<data.length; i++){
             for(j=0; j<data.length; j++){
                 System.out.print(" "+ hessian[i][j]);
@@ -323,8 +329,9 @@ public class Kripsi {
     
     public static void bagiDataTraining(ArrayList<Berita> beritaList, double[] fitur){
         String[] kategori={"ekonomi", "olahraga", "teknologi", "entertainment"};
+        int[] hasil=new int[4];
         ArrayList<Berita>[] training = new ArrayList[kategori.length];
-        int i=0;
+        int i=0, j=0, k=0;
         for(i=0; i<training.length; i++){
             training[i]=new ArrayList();
         }
@@ -338,9 +345,41 @@ public class Kripsi {
         //for(Berita berita:beritaList){
         //    System.out.println(berita.getKategori());
         //}
-        SVM svmku=new SVM();
-        svmku.train(training[0], training[2]);
-        svmku.test(fitur);
+        SVM[] svmku=new SVM[3];
+        k=0;
+        for(i=0; i<svmku.length; i++){
+            for(j=i+1; j<svmku.length; j++){
+                svmku[k]=new SVM();
+                svmku[k].train(training[i], training[j]);
+                //System.out.println(k+"-"+i+" "+j+"");
+                k++;
+            }
+        }
+        
+        k=0;
+        for(i=0; i<svmku.length; i++){
+            for(j=i+1; j<svmku.length; j++){
+                System.out.println(svmku[k].test(fitur));
+                if(kategori[i].equals(svmku[k].test(fitur))) hasil[i]++;
+                else hasil[j]++;
+                k++;
+            }
+        }
+        
+        System.out.println("hasil kategori : "+kategori[getIndexOfLargest(hasil)]);
+        //svmku.train(training[2], training[1]);
+        //svmku.test(fitur);
     }
     
+    
+
+    public static int getIndexOfLargest( int[] array ){
+        if ( array == null || array.length == 0 ) return -1; // null or empty
+
+        int largest = 0;
+        for ( int i = 1; i < array.length; i++ ){
+            if ( array[i] > array[largest] ) largest = i;
+        }
+        return largest; // position of the first largest found
+    }
 }

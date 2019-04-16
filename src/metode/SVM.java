@@ -165,16 +165,19 @@ public class SVM {
         return hasil;
     }
     
-    public void test(double[] test){
-        double[] testKernel=new double[test.length];
+    public String test(double[] test){
+        double[] testKernel=new double[data.length];
         int i=0;
         String hasil;
         for(i=0; i<data.length; i++){
             testKernel[i]=hitungKernel(test, data[i]);
         }
-        System.out.println(Arrays.toString(testKernel));
+        //System.out.println(Arrays.toString(testKernel));
+        //System.out.println(Arrays.toString(w));
+        //System.out.println(data.length);
         double sign=perkalianMatrix(testKernel, w)+b;
-        if(sign>0) System.out.println(kelas[1]);
-        else System.out.println(kelas[0]);
+        if(sign>0) hasil=kelas[1];
+        else hasil=kelas[0];
+        return hasil;
     }
 }
