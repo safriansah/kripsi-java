@@ -14,7 +14,7 @@ import org.jsoup.nodes.Document;
  * @author safriansah
  */
 public class Berita {
-    String judul, isi, kategori;
+    String judul, isi, kategori, prediksi;
     ArrayList<String> tokens = new ArrayList<String>();
     double[] tfidf, svd;
 
@@ -26,6 +26,14 @@ public class Berita {
 
     public void setJudul(String judul) {
         this.judul = judul;
+    }
+
+    public String getPrediksi() {
+        return prediksi;
+    }
+
+    public void setPrediksi(String prediksi) {
+        this.prediksi = prediksi;
     }
 
     public void setIsi(String isi) {

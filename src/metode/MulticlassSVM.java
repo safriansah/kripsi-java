@@ -61,10 +61,11 @@ public class MulticlassSVM {
     
     public void setSVM(){
         int i, j, k;
-        svm=new SVM[kelas.length];
+        k=kelas.length;
+        svm=new SVM[k*(k-1)/2];
         k=0;
-        for(i=0; i<svm.length; i++){
-            for(j=i+1; j<svm.length; j++){
+        for(i=0; i<kelas.length; i++){
+            for(j=i+1; j<kelas.length; j++){
                 svm[k]=new SVM();
                 svm[k].train(training[i], training[j]);
                 k++;
@@ -72,19 +73,20 @@ public class MulticlassSVM {
         }
     }
     
-    public void test(double[] fitur){
+    public String test(double[] fitur){
         int i, j, k;
         int[] hasil=new int[kelas.length];
         k=0;
-        for(i=0; i<svm.length; i++){
-            for(j=i+1; j<svm.length; j++){
-                //System.out.println(svm[k].test(fitur));
+        for(i=0; i<kelas.length; i++){
+            for(j=i+1; j<kelas.length; j++){
                 if(kelas[i].equals(svm[k].test(fitur))) hasil[i]++;
                 else hasil[j]++;
                 k++;
             }
         }
-        System.out.println("hasil kategori : "+kelas[getIndexOfLargest(hasil)]);
+        //System.out.println(Arrays.toString(hasil));
+        //System.out.println("hasil kategori : "+kelas[getIndexOfLargest(hasil)]);
+        return kelas[getIndexOfLargest(hasil)];
     }
     
     public static int getIndexOfLargest(int[] array){
