@@ -35,6 +35,9 @@ public class Kripsi {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
+        KripsiView gui = new KripsiView();
+        gui.setVisible(true);
+        /*
         int i=1;
         Koneksi koneksi=new Koneksi();
         Prepro pre=new Prepro();
@@ -69,7 +72,7 @@ public class Kripsi {
         }
         tfidf.setTerm(tokens);
         tokens=tfidf.getTerm();
-        for(String a:tokens) System.out.println(a);
+        //for(String a:tokens) System.out.println(a);
         
         tfidf.setTfidf(dok);
         double[][] tif=tfidf.getTfidf();
