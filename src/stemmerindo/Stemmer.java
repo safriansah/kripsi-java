@@ -5,7 +5,7 @@
  */
 package stemmerindo;
 
-import config.Dictionary;
+import stemmerindo.dictionary.Dictionary;
 import java.util.List;
 
 /**

@@ -5,7 +5,7 @@
  */
 package metode;
 
-import config.Dictionary;
+import stemmerindo.dictionary.Dictionary;
 import java.util.ArrayList;
 import java.util.List;
 import stemmerindo.Stemmer;

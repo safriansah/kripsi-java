@@ -97,4 +97,9 @@ public class MulticlassSVM {
         }
         return largest; // position of the first largest found
     }
+
+    public String[] getKelas() {
+        System.out.println(Arrays.toString(kelas));
+        return kelas;
+    }
 }

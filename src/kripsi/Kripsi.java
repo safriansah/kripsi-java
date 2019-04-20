@@ -9,12 +9,13 @@ import config.Koneksi;
 import metode.Prepro;
 import model.Berita;
 import IndonesianStemmer.IndonesianStemmer;
-import config.Dictionary;
+import stemmerindo.dictionary.Dictionary;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import metode.ConfMatrix;
 import metode.MulticlassSVM;
 import metode.SVD;
 import metode.SVM;
@@ -68,6 +69,7 @@ public class Kripsi {
         }
         tfidf.setTerm(tokens);
         tokens=tfidf.getTerm();
+        for(String a:tokens) System.out.println(a);
         
         tfidf.setTfidf(dok);
         double[][] tif=tfidf.getTfidf();
@@ -82,7 +84,7 @@ public class Kripsi {
         //proses training multiclass svm
         MulticlassSVM multi=new MulticlassSVM();
         multi.train(beritaList);
-        
+                
         //proses testing multiclass svm
         for(i=0; i<beritaTest.size(); i++){
             beritaTest.get(i).setTokens(pre.getPrepro(beritaTest.get(i).getIsi()));
@@ -91,7 +93,15 @@ public class Kripsi {
             beritaTest.get(i).setPrediksi(multi.test(beritaTest.get(i).getSvd()));
             System.out.println(beritaTest.get(i).getKategori()+" "+beritaTest.get(i).getPrediksi());
         }
-        /*
+        
+        ConfMatrix cm=new ConfMatrix(beritaTest, multi.getKelas());
+        
+        /*String[] kelas={"ekonomi", "entertainment", "olahraga", "teknologi"};
+        for(i=0; i<beritaTest.size(); i++){
+            index=randomGenerator.nextInt(kelas.length);
+            beritaTest.get(i).setPrediksi(kelas[index]);
+            System.out.println(beritaTest.get(i).getKategori()+" "+beritaTest.get(i).getPrediksi());
+        }
         String[] t={    "Galaxy M20 adalah andalan baru Samsung untuk pasaran ponsel papan tengah di Indonesia yang baru saja diresmikan kehadirannya awal pekan ini.", 
                         "Indonesia Bakal Manfaatkan Minyak Sawit Jadi Bensin dan LPG",
                         "Arema Vs Persebaya, Milomir Yakin Singo Edan Juara Piala Presiden 2019",
