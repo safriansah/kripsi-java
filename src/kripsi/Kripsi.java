@@ -35,7 +35,7 @@ public class Kripsi {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        KripsiView gui = new KripsiView();
+        KripsiGUI gui = new KripsiGUI();
         gui.setVisible(true);
         /*
         int i=1;

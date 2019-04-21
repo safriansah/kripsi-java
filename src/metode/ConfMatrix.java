@@ -148,5 +148,37 @@ public class ConfMatrix {
         }
         System.out.println("reca "+Arrays.toString(recall));
     }
+    
+    public int[][] getValue() {
+        return value;
+    }
+
+    public int[] getTp() {
+        return tp;
+    }
+
+    public int[] getFp() {
+        return fp;
+    }
+
+    public int[] getFn() {
+        return fn;
+    }
+
+    public int[] getTn() {
+        return tn;
+    }
+
+    public double[] getAkurasi() {
+        return akurasi;
+    }
+
+    public double[] getPresisi() {
+        return presisi;
+    }
+
+    public double[] getRecall() {
+        return recall;
+    }
           
 }
