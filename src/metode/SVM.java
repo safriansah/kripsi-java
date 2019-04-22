@@ -178,6 +178,7 @@ public class SVM {
         double sign=perkalianMatrix(testKernel, w)+b;
         if(sign>0) hasil=kelas[1];
         else hasil=kelas[0];
+        //System.out.println(kelas[0]+" : "+kelas[1]+" = "+hasil);
         return hasil;
     }
 }

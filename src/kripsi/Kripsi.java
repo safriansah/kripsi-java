@@ -37,8 +37,8 @@ public class Kripsi {
         // TODO code application logic here
         KripsiGUI gui = new KripsiGUI();
         gui.setVisible(true);
-        /*
-        int i=1;
+        
+        /*int i=1;
         Koneksi koneksi=new Koneksi();
         Prepro pre=new Prepro();
         ArrayList<Berita> beritaList=new ArrayList<Berita>();
@@ -47,19 +47,6 @@ public class Kripsi {
         TFIDF tfidf=new TFIDF();
         
         beritaList=koneksi.getBeritaList();
-        
-        //bagi data menjadi data training(beritaList) dan testing(beritaTesting)
-        Random randomGenerator;
-        randomGenerator = new Random();
-        int index=0;
-        for(i=0; i<20; i++){
-            index=randomGenerator.nextInt(beritaList.size());
-            //System.out.print("\n"+index+" : ");
-            //System.out.print(beritaList.get(index).getKategori());
-            //System.out.print(" "+beritaList.size());
-            beritaTest.add(beritaList.get(index));
-            beritaList.remove(index);
-        }
         
         //proses perhitungan TFIDF dan SVD untuk data training
         ArrayList<String> tokens=new ArrayList<String>();
@@ -87,39 +74,53 @@ public class Kripsi {
         //proses training multiclass svm
         MulticlassSVM multi=new MulticlassSVM();
         multi.train(beritaList);
-                
-        //proses testing multiclass svm
-        for(i=0; i<beritaTest.size(); i++){
-            beritaTest.get(i).setTokens(pre.getPrepro(beritaTest.get(i).getIsi()));
-            beritaTest.get(i).setTfidf(tfidf.getQueryTfidf(beritaTest.get(i).getTokens()));
-            beritaTest.get(i).setSvd(svd.getVektorQ(beritaTest.get(i).getTfidf()));
-            beritaTest.get(i).setPrediksi(multi.test(beritaTest.get(i).getSvd()));
-            System.out.println(beritaTest.get(i).getKategori()+" "+beritaTest.get(i).getPrediksi());
-        }
         
-        ConfMatrix cm=new ConfMatrix(beritaTest, multi.getKelas());
-        
-        /*String[] kelas={"ekonomi", "entertainment", "olahraga", "teknologi"};
-        for(i=0; i<beritaTest.size(); i++){
-            index=randomGenerator.nextInt(kelas.length);
-            beritaTest.get(i).setPrediksi(kelas[index]);
-            System.out.println(beritaTest.get(i).getKategori()+" "+beritaTest.get(i).getPrediksi());
-        }
         String[] t={    "Galaxy M20 adalah andalan baru Samsung untuk pasaran ponsel papan tengah di Indonesia yang baru saja diresmikan kehadirannya awal pekan ini.", 
                         "Indonesia Bakal Manfaatkan Minyak Sawit Jadi Bensin dan LPG",
                         "Arema Vs Persebaya, Milomir Yakin Singo Edan Juara Piala Presiden 2019",
                         "marvel memamerkan film barunya yang akan tayang pada tanggal 9 april 2019 berjudul",
                         "Menyambut pemilu, beberapa brand lokal dan internasional yang tergabung dalam Klingking Fun-Pesta Diskon Anti-golput berbondong-bondong menjajakan diskon untuk para warga pemilih. Hanya dengan menunjukkan jari bertinta biru pada 17 April, Anda sudah bisa menikmati diskon di berbagai tempat. Lantas, brand-brand apa saja yang menawarkan diskon dengan hanya menunjukkan jari warna biru? Berikut ini daftar brand yang menjajakan diskon pada 17 April: 1. Buccheri, diskon hingga 50 persen untuk setiap transaksi. 2. Mokka Coffee Cabana, setiap beli satu minuman apa pun, gratis satu minuman. 3. J.Co Indonesia, beli J.Coffee ukuran due seharga Rp 25.000 dengan minimum pembelian 2 J.Coffee. 4. Bakmi Naga Resto, dapatkan diskon 12 persen dalam setiap pembelian produk apa pun. 5. Wacoal, diskon 50 persen setiap pembelian apa pun. 6. Shihlin, gratis kentang goreng untuk 100 pembeli pertama. 7. Sushi Tei, dapatkan makanan gratis setiap minimum transaksi Rp 300.000. 8. Hong Tang, beli satu minuman gratis satu minuman. 9. Singgalang HS Jewelry, dapatkan voucher hingga Rp 250.000 setiap pembelian berlian. 10. Bread Talk, dapatkan roti floss seharga Rp 7.500. 11. Zoya, dapatkan diskon 50 persen dalam setiap pembelian Zoya Lip Paint. 12. Fladeo, dapatkan diskon 50 persen + 30 persen setiap pembelian sepatu. 13. Dan+Dan, potongan harga Rp 25.000 setiap pembelian apa pun. 14. Alfamart, dapatkan potongan harga di beberapa produk. 15. Mama Malaka, gratis Mama Special ABC dengan minimal pembelian Rp 150.000. 16. Roppan, dapatkan harga spesial Rp 150.000 setiap pembelian 2 dozen pastries atau 2 box T-pan. 17. LGS, diskon pakaian hingga 50 persen di setiap produk. 18. Johnwin, diskon pakaian 50 persen di setiap produk. 19. CFC, beli 5 ayam gratis 3 botol Coca-cola. 20. The Duck King Group, cashback 100 persen hingga Rp 500.000 bagi para pemilih yang dine-in. Selain 20 brand di atas, masih banyak lagi brand lain, seperti Sogo, Seibu, Cinema XXI, Ace Hardwere, Electronic City, dan berbagai brand ternama lainnya. Toko offline, toko online seperti Tokopedia dan Bukalapak, pun memberikan diskon pada hari pemilu. Caranya, Anda cukup mengunggah foto jari bertinta biru pada aplikasi khusus, kemudian Anda bisa mendapatkan diskon hingga 50 persen di Tokopedia dan Bukalapak. Jadi, bagaimana? Apakah tertarik untuk memanfaatkan promo di hari pemilu? Video Pilihan PenulisFika Nurul Ulya EditorBambang Priyo Jatmiko Tag: diskon pemilu Berita Terkait PLN Berikan 3 Paket Diskon untuk Pelanggan yang Tambah Daya Listrik Berencana Nikmati Musim Panas di Bangkok? Intip Diskon Tiket Lion Air Garuda Indonesia Beri Diskon, Jakarta-Labuan Bajo Cuma Rp 1,9 Juta Diskon hingga 65 Persen, Tiket Promo Garuda Indonesia Masih Tersedia 170.000 Kursi Ini Daftar Merchant yang Beri Diskon dengan Hanya Tunjukkan Jari Ungu"
                         };
-        String tes=t[1];
+        String tes=t[4];
         ArrayList<String> prep=pre.getPrepro(tes);
         double[] tfi=tfidf.getQueryTfidf(prep);
         double[] fitur=svd.getVektorQ(tfi);
         System.out.println(tes);
         
-        MulticlassSVM multi=new MulticlassSVM();
-        multi.train(beritaList);
-        multi.test(fitur);
+        multi.getKelas();
+        System.out.println("hasil presikisi: "+multi.test(fitur));
+        
+               
+        //proses testing multiclass svm
+        /*for(i=0; i<beritaTest.size(); i++){
+            beritaTest.get(i).setTokens(pre.getPrepro(beritaTest.get(i).getIsi()));
+            beritaTest.get(i).setTfidf(tfidf.getQueryTfidf(beritaTest.get(i).getTokens()));
+            beritaTest.get(i).setSvd(svd.getVektorQ(beritaTest.get(i).getTfidf()));
+            beritaTest.get(i).setPrediksi(multi.test(beritaTest.get(i).getSvd()));
+            System.out.println(beritaTest.get(i).getKategori()+" "+beritaTest.get(i).getPrediksi());
+        }
+        //bagi data menjadi data training(beritaList) dan testing(beritaTesting)
+        Random randomGenerator;
+        randomGenerator = new Random();
+        int index=0;
+        for(i=0; i<20; i++){
+            index=randomGenerator.nextInt(beritaList.size());
+            //System.out.print("\n"+index+" : ");
+            //System.out.print(beritaList.get(index).getKategori());
+            //System.out.print(" "+beritaList.size());
+            beritaTest.add(beritaList.get(index));
+            beritaList.remove(index);
+        }
+        
+        //ConfMatrix cm=new ConfMatrix(beritaTest, multi.getKelas());
+        
+        //String[] kelas={"ekonomi", "entertainment", "olahraga", "teknologi"};
+        /*for(i=0; i<beritaTest.size(); i++){
+            index=randomGenerator.nextInt(kelas.length);
+            beritaTest.get(i).setPrediksi(kelas[index]);
+            System.out.println(beritaTest.get(i).getKategori()+" "+beritaTest.get(i).getPrediksi());
+        }
+        
         //bagiDataTraining(beritaList, fitur);
         /*for(i=0; i<data.length; i++){
             for(j=0; j<data.length; j++){

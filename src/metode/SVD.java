@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author safriansah
  */
 public class SVD {
-    double[][] u, s, v;
+    double[][] u, s, v, si;
     Matrix a;
     SingularValueDecomposition svd;
 
@@ -24,6 +24,7 @@ public class SVD {
         u=svd.getU().getArrayCopy();
         s=svd.getS().getArrayCopy();
         v=svd.getV().getArrayCopy();
+        si=svd.getS().inverse().getArrayCopy();
     }
 
     public double[][] getU() {
@@ -47,16 +48,11 @@ public class SVD {
                 temp[i]+=tfidf[j]*u[j][i];
             }
         }
-        for(i=0; i<s[0].length; i++){
+        for(i=0; i<si.length; i++){
             for(j=0; j<temp.length; j++){
-                hasil[i]+=temp[j]*s[j][i];
+                hasil[i]+=temp[j]*si[j][i];
             }
         }
-        return hasil;
-    }
-    
-    public double hitungPerkalianMatrix(double[] a, double[][] b){
-        double hasil=0;
         return hasil;
     }
 }

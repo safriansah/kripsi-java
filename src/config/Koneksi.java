@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class Koneksi {
     public static Connection con;
     public static Statement stm;
+    boolean status;
    
     public Koneksi() {
         try {
@@ -30,8 +31,10 @@ public class Koneksi {
             con =DriverManager.getConnection(url,user,pass);
             stm = con.createStatement();
             System.out.println("koneksi berhasil;");
+            status=true;
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println("koneksi gagal: " +e.getMessage());
+            status=false;
         }
     }
     
@@ -66,5 +69,9 @@ public class Koneksi {
         }
         if(a>0) hasil=true;
         return hasil;
+    }
+
+    public boolean isStatus() {
+        return status;
     }
 }

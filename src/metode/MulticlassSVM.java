@@ -84,7 +84,7 @@ public class MulticlassSVM {
                 k++;
             }
         }
-        //System.out.println(Arrays.toString(hasil));
+        System.out.println(Arrays.toString(hasil));
         //System.out.println("hasil kategori : "+kelas[getIndexOfLargest(hasil)]);
         return kelas[getIndexOfLargest(hasil)];
     }
