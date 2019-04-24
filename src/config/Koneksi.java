@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class Koneksi {
     public static Connection con;
     public static Statement stm;
-    boolean status;
+    String status;
    
     public Koneksi() {
         try {
@@ -30,12 +30,11 @@ public class Koneksi {
             Class.forName("com.mysql.jdbc.Driver");
             con =DriverManager.getConnection(url,user,pass);
             stm = con.createStatement();
-            System.out.println("koneksi berhasil;");
-            status=true;
+            status="koneksi berhasil;";
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println("koneksi gagal: " +e.getMessage());
-            status=false;
+            status="koneksi gagal: " +e.getMessage();
         }
+        System.out.println(status);
     }
     
     public ArrayList<Berita> getBeritaList(){
@@ -71,7 +70,7 @@ public class Koneksi {
         return hasil;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 }

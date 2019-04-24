@@ -18,6 +18,10 @@ public class Berita {
     ArrayList<String> tokens = new ArrayList<String>();
     double[] tfidf, svd;
 
+    public Berita() {
+        
+    }
+    
     public Berita(String judul, String isi, String kategori) {
         this.judul = judul;
         this.isi = isi;

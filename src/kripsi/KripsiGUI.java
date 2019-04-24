@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
@@ -33,14 +34,19 @@ import model.Berita;
 public class KripsiGUI extends javax.swing.JFrame {
 
     Koneksi koneksi=new Koneksi();
-    Prepro pre;
-    ArrayList<Berita> beritaList=new ArrayList<Berita>();
-    ArrayList<Berita> beritaTest=new ArrayList<Berita>();
+    ArrayList<Berita> beritaList=new ArrayList<>();
+    ArrayList<Berita> beritaTest=new ArrayList<>();
     DefaultTableModel datasetTabel, dataTestTabel;
-    NumberFormat formatter = new DecimalFormat("#0.00");  
+    NumberFormat formatter = new DecimalFormat("#0.00");
+    FormValidasi form = new FormValidasi();
+    Prepro pre;
+    TFIDF tfidf;
+    SVD svd;
+    MulticlassSVM multi;
         
     /**
      * Creates new form KripsiView
+     * @throws java.lang.Exception
      */
     public KripsiGUI() throws Exception{
         initComponents();
@@ -50,11 +56,10 @@ public class KripsiGUI extends javax.swing.JFrame {
         datasetTabel = (DefaultTableModel) jTable1.getModel();
         dataTestTabel = (DefaultTableModel) jTable2.getModel();
         pre=new Prepro();
+        multi=new MulticlassSVM();
         jTextArea1.setLineWrap(true);
-        String kon;
-        if(koneksi.isStatus()) kon="berhasil";
-        else kon="gagal";
-        jTextArea1.setText("Koneksi database "+kon+"\n\n");
+        jTextArea1.setText(koneksi.getStatus()+"\n\n");
+        form.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
     
     public void generateDataset(){
@@ -69,7 +74,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         for(Berita data: dataset){
             judul=data.getJudul();
             kategori=data.getKategori();
-            Object[] dataTabel = {i+".", judul, kategori};
+            Object[] dataTabel = {i, judul, kategori};
             tabel.addRow(dataTabel);
             i++;
         }
@@ -78,8 +83,8 @@ public class KripsiGUI extends javax.swing.JFrame {
     public void generateDataTest(){
         Random randomGenerator;
         randomGenerator = new Random();
-        int i, index=0;
-        for(i=0; i<20; i++){
+        int i, index;
+        for(i=0; i<28; i++){
             index=randomGenerator.nextInt(beritaList.size());
             beritaTest.add(beritaList.get(index));
             beritaList.remove(index);
@@ -89,8 +94,8 @@ public class KripsiGUI extends javax.swing.JFrame {
     public void startKlasifikasi(){
         int i, j;
         //proses perhitungan TFIDF dan SVD untuk data training
-        TFIDF tfidf=new TFIDF();
-        ArrayList<String> tokens=new ArrayList<String>();
+        tfidf=new TFIDF();
+        ArrayList<String> tokens=new ArrayList<>();
         ArrayList<String>[] dok = new ArrayList[beritaList.size()];
         for(i=0; i<beritaList.size(); i++){
             beritaList.get(i).setTokens(pre.getPrepro(beritaList.get(i).getIsi()));
@@ -105,7 +110,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         tfidf.setTfidf(dok);
         double[][] tif=tfidf.getTfidf();
         
-        SVD svd=new SVD(tif);
+        svd=new SVD(tif);
         tif=svd.getV();
         for(i=0; i<beritaList.size(); i++){
             beritaList.get(i).setSvd(tif[i]);
@@ -113,7 +118,6 @@ public class KripsiGUI extends javax.swing.JFrame {
         }
         
         //proses training multiclass svm
-        MulticlassSVM multi=new MulticlassSVM();
         multi.train(beritaList);
                 
         //proses testing multiclass svm
@@ -209,6 +213,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -219,6 +224,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(java.awt.Color.white);
@@ -244,7 +250,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1024, Short.MAX_VALUE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
@@ -306,6 +312,16 @@ public class KripsiGUI extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setBackground(new java.awt.Color(51, 153, 255));
+        jButton4.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        jButton4.setForeground(java.awt.Color.white);
+        jButton4.setText("ConnetDB");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -313,9 +329,14 @@ public class KripsiGUI extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap())
@@ -324,13 +345,18 @@ public class KripsiGUI extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jButton1))
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
+
+        jButton1.getAccessibleContext().setAccessibleName("");
+        jButton4.getAccessibleContext().setAccessibleName("");
 
         jPanel4.setBackground(java.awt.Color.white);
         jPanel4.setMaximumSize(new java.awt.Dimension(1024, 32767));
@@ -385,9 +411,9 @@ public class KripsiGUI extends javax.swing.JFrame {
         });
 
         jButton3.setBackground(new java.awt.Color(51, 153, 255));
-        jButton3.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        jButton3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jButton3.setForeground(java.awt.Color.white);
-        jButton3.setText("Mulai Klasifikasi");
+        jButton3.setText("Classify");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -400,42 +426,54 @@ public class KripsiGUI extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
+                        .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2))
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(jButton3)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jButton2))
+                .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jButton2.getAccessibleContext().setAccessibleName("");
+        jButton3.getAccessibleContext().setAccessibleName("");
 
         jPanel5.setBackground(java.awt.Color.white);
         jPanel5.setMaximumSize(new java.awt.Dimension(1024, 32767));
         jPanel5.setMinimumSize(new java.awt.Dimension(1024, 100));
 
         jLabel4.setFont(new java.awt.Font("Open Sans", 1, 14)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Output:");
 
         jTextArea1.setEditable(false);
         jTextArea1.setBackground(java.awt.Color.white);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
-        jTextArea1.setMargin(new java.awt.Insets(4, 8, 0, 0));
+        jTextArea1.setMargin(new java.awt.Insets(4, 8, 2, 2));
         jScrollPane2.setViewportView(jTextArea1);
+
+        jButton5.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        jButton5.setText("Validation");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -445,20 +483,29 @@ public class KripsiGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton5))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                        .addGap(35, 35, 35))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
+
+        jButton5.getAccessibleContext().setAccessibleName("Validation");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -466,7 +513,7 @@ public class KripsiGUI extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE))
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -477,8 +524,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -554,6 +601,22 @@ public class KripsiGUI extends javax.swing.JFrame {
         jTextArea1.append("\n--------------------------------------------\n\n");
     }//GEN-LAST:event_jTable2MouseClicked
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        koneksi=new Koneksi();
+        jTextArea1.append(koneksi.getStatus()+"\n\n");
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        if(multi.getKelas()==null){
+            JOptionPane.showMessageDialog(this,"Mesin Klasifikasi belum siap");
+            return;
+        }
+        form.setModel(tfidf, svd, multi);
+        form.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -598,6 +661,8 @@ public class KripsiGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
