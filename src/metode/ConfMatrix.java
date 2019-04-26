@@ -149,6 +149,16 @@ public class ConfMatrix {
         System.out.println("reca "+Arrays.toString(recall));
     }
     
+    public double getRata(double[] data){
+        double hasil=0;
+        int i;
+        for(i=0; i<data.length; i++){
+            hasil+=data[i];
+        }
+        hasil=hasil/data.length;
+        return hasil;
+    }
+    
     public int[][] getValue() {
         return value;
     }

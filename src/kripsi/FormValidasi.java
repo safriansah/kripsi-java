@@ -36,6 +36,7 @@ public class FormValidasi extends javax.swing.JFrame {
         this.setResizable(false);
         pre=new Prepro();
         jTextArea1.setLineWrap(true);
+        jTextField2.setEditable(false);
     }
     
     public void setModel(TFIDF tfidfModel, SVD svdModel, MulticlassSVM multiModel){
@@ -66,8 +67,9 @@ public class FormValidasi extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("logo.png")).getImage());
         setMaximumSize(new java.awt.Dimension(512, 768));
-        setPreferredSize(new java.awt.Dimension(512, 768));
+        setResizable(false);
 
         jPanel1.setBackground(java.awt.Color.white);
         jPanel1.setMaximumSize(new java.awt.Dimension(512, 768));
@@ -124,6 +126,7 @@ public class FormValidasi extends javax.swing.JFrame {
             }
         });
 
+        jTextField2.setFont(new java.awt.Font("Open Sans", 0, 14)); // NOI18N
         jTextField2.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jTextField2.setMaximumSize(new java.awt.Dimension(512, 2147483647));
 
@@ -162,7 +165,7 @@ public class FormValidasi extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
