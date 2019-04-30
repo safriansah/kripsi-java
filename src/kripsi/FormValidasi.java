@@ -26,6 +26,7 @@ public class FormValidasi extends javax.swing.JFrame {
     TFIDF tfidf;
     SVD svd;
     MulticlassSVM multi;
+    KripsiGUI gui;
     /**
      * Creates new form FormValidasi
      */
@@ -43,6 +44,10 @@ public class FormValidasi extends javax.swing.JFrame {
         tfidf=tfidfModel;
         svd=svdModel;
         multi=multiModel;
+    }
+    
+    public void setGui(KripsiGUI kgui){
+        gui=kgui;
     }
 
     /**
@@ -164,7 +169,7 @@ public class FormValidasi extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1))
                 .addContainerGap(65, Short.MAX_VALUE))
         );
 
@@ -203,9 +208,16 @@ public class FormValidasi extends javax.swing.JFrame {
         berita.setIsi(jTextArea1.getText());
         berita.setTokens(pre.getPrepro(berita.getIsi()));
         berita.setTfidf(tfidf.getQueryTfidf(berita.getTokens()));
-        berita.setSvd(svd.getVektorQ(berita.getTfidf()));
+        if(svd.getS()==null) berita.setSvd(berita.getTfidf());
+        else berita.setSvd(svd.getVektorQ(berita.getTfidf()));
         berita.setPrediksi(multi.test(berita.getSvd()));
         jTextField2.setText(berita.getPrediksi());
+        String hasil="Hasil Validasi"
+                    +"\njudul: "+berita.getJudul()
+                    +"\nisi: "+berita.getIsi()
+                    +"\nprediksi kategori: "+berita.getPrediksi()
+                    +"\n\n";
+        gui.setOutput(hasil);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

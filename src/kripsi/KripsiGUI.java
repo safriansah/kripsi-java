@@ -60,6 +60,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jTextArea1.setLineWrap(true);
         jTextArea1.setText(koneksi.getStatus()+"\n\n");
         form.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        form.setGui(this);
     }
     
     public void generateDataset(){
@@ -105,10 +106,14 @@ public class KripsiGUI extends javax.swing.JFrame {
         }
         tfidf.setTerm(tokens);
         tokens=tfidf.getTerm();
+        jTextArea1.append("Jumlah term TF-IDF:\t"+tokens.size());
         //for(String a:tokens) System.out.println(a);
         
         tfidf.setTfidf(dok);
         double[][] tif=tfidf.getTfidf();
+        /*for(i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setTfidf(tfidf.getQueryTfidf(beritaList.get(i).getTokens()));
+        }*/
         
         svd=new SVD(tif);
         tif=svd.getV();
@@ -116,6 +121,7 @@ public class KripsiGUI extends javax.swing.JFrame {
             beritaList.get(i).setSvd(tif[i]);
             //System.out.println(Arrays.toString(tif[i]));
         }
+        jTextArea1.append("\nHasil reduksi fitur SVD:\t"+tif[0].length+"\n\n");
         
         //proses training multiclass svm
         multi.train(beritaList);
@@ -200,6 +206,119 @@ public class KripsiGUI extends javax.swing.JFrame {
         jTextArea1.append("\nRecall: \t"+formatter.format(cm.getRata(recall)));
         jTextArea1.append("\n");
     }
+    
+    public void startKlasifikasi2(){
+        int i, j;
+        //proses perhitungan TFIDF dan SVD untuk data training
+        tfidf=new TFIDF();
+        ArrayList<String> tokens=new ArrayList<>();
+        ArrayList<String>[] dok = new ArrayList[beritaList.size()];
+        for(i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setTokens(pre.getPrepro(beritaList.get(i).getIsi()));
+            tokens.addAll(beritaList.get(i).getTokens());
+            dok[i]=beritaList.get(i).getTokens();
+            //System.out.println(beritaList.get(i).getKategori());
+        }
+        tfidf.setTerm(tokens);
+        tokens=tfidf.getTerm();
+        jTextArea1.append("Jumlah term TF-IDF:\t"+tokens.size()+"\n");
+        //for(String a:tokens) System.out.println(a);
+        
+        tfidf.setTfidf(dok);
+        svd=new SVD();
+        //double[][] tif=tfidf.getTfidf();
+        for(i=0; i<beritaList.size(); i++){
+            beritaList.get(i).setTfidf(tfidf.getQueryTfidf(beritaList.get(i).getTokens()));
+            beritaList.get(i).setSvd(beritaList.get(i).getTfidf());
+        }
+        
+        //proses training multiclass svm
+        multi.train(beritaList);
+                
+        //proses testing multiclass svm
+        String hasil;
+        for(i=0; i<beritaTest.size(); i++){
+            hasil="x";
+            beritaTest.get(i).setTokens(pre.getPrepro(beritaTest.get(i).getIsi()));
+            beritaTest.get(i).setTfidf(tfidf.getQueryTfidf(beritaTest.get(i).getTokens()));
+            beritaTest.get(i).setSvd(beritaTest.get(i).getTfidf());
+            beritaTest.get(i).setPrediksi(multi.test(beritaTest.get(i).getSvd()));
+            if(beritaTest.get(i).getKategori().equals(beritaTest.get(i).getPrediksi())) hasil=" ";
+            jTextArea1.append((i+1)+". "+beritaTest.get(i).getPrediksi()+" ("+beritaTest.get(i).getKategori()+")"+" "+hasil+"\n");
+        }
+        
+        String[] kelas=multi.getKelas();
+        ConfMatrix cm=new ConfMatrix(beritaTest, kelas);
+        jTextArea1.append("\nConfusion Matrix");
+        jTextArea1.append("\nKategori\t");
+        for(String a:kelas){
+            jTextArea1.append(a+"\t");
+        }
+        jTextArea1.append("\n");
+        
+        int[][] value=cm.getValue();
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(kelas[i]+"\t");
+            for(j=0; j<kelas.length; j++){
+                jTextArea1.append(value[i][j]+"\t");
+            }
+            jTextArea1.append("\n");
+        }
+        
+        int[] tp=cm.getTp();
+        jTextArea1.append("\nTP: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(tp[i]+"\t");
+        }
+        
+        int[] fp=cm.getFp();
+        jTextArea1.append("\nFP: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(fp[i]+"\t");
+        }
+        
+        int[] fn=cm.getFn();
+        jTextArea1.append("\nFN: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(fn[i]+"\t");
+        }
+        
+        int[] tn=cm.getTn();
+        jTextArea1.append("\nTN: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(tn[i]+"\t");
+        }
+        jTextArea1.append("\n");
+        
+        double[] akurasi=cm.getAkurasi();
+        jTextArea1.append("\nAkurasi: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(formatter.format(akurasi[i])+"\t");
+        }
+        
+        double[] presisi=cm.getPresisi();
+        jTextArea1.append("\nPresisi: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(formatter.format(presisi[i])+"\t");
+        }
+        
+        double[] recall=cm.getRecall();
+        jTextArea1.append("\nRecall: \t");
+        for(i=0; i<kelas.length; i++){
+            jTextArea1.append(formatter.format(recall[i])+"\t");
+        }
+        jTextArea1.append("\n");
+        
+        jTextArea1.append("\nRata-rata");
+        jTextArea1.append("\nAkurasi: \t"+formatter.format(cm.getRata(akurasi)));
+        jTextArea1.append("\nPresisi: \t"+formatter.format(cm.getRata(presisi)));
+        jTextArea1.append("\nRecall: \t"+formatter.format(cm.getRata(recall)));
+        jTextArea1.append("\n");
+    }
+    
+    public void setOutput(String output){
+        jTextArea1.append(output);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -226,6 +345,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jTable2 = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -313,6 +433,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jButton1.setForeground(java.awt.Color.white);
         jButton1.setText("Generate");
+        jButton1.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -323,6 +444,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jButton4.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jButton4.setForeground(java.awt.Color.white);
         jButton4.setText("ConnetDB");
+        jButton4.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -411,6 +533,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jButton2.setForeground(java.awt.Color.white);
         jButton2.setText("Generate");
+        jButton2.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -421,9 +544,18 @@ public class KripsiGUI extends javax.swing.JFrame {
         jButton3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jButton3.setForeground(java.awt.Color.white);
         jButton3.setText("Classify");
+        jButton3.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("ClassifyWitoutSVD");
+        jButton6.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
             }
         });
 
@@ -439,6 +571,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -451,7 +585,9 @@ public class KripsiGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton3)
+                        .addComponent(jButton6))
                     .addComponent(jButton2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -476,6 +612,7 @@ public class KripsiGUI extends javax.swing.JFrame {
 
         jButton5.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
         jButton5.setText("Validation");
+        jButton5.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -508,7 +645,7 @@ public class KripsiGUI extends javax.swing.JFrame {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
                         .addGap(35, 35, 35))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton5)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
@@ -529,8 +666,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -562,7 +699,7 @@ public class KripsiGUI extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        if(beritaList.size()<21){
+        if(beritaList.size()<28){
             JOptionPane.showMessageDialog(this,"Dataset tidak mencukupi");
             return;
         }
@@ -622,6 +759,20 @@ public class KripsiGUI extends javax.swing.JFrame {
         form.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        if(beritaTest.size()<1){
+            JOptionPane.showMessageDialog(this,"Siapkan dahulu data yang akan diuji");
+            return;
+        }
+        double startTime=System.currentTimeMillis();
+        startKlasifikasi2();
+        double stopTime=System.currentTimeMillis();
+        double seconds=((stopTime-startTime)/1000)%60;
+        jTextArea1.append("\nWaktu Proses: \t"+formatter.format(seconds)+" detik");
+        jTextArea1.append("\n--------------------------------------------\n\n");
+    }//GEN-LAST:event_jButton6ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -668,6 +819,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

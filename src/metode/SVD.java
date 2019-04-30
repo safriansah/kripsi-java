@@ -17,6 +17,10 @@ public class SVD {
     double[][] u, s, v, si;
     Matrix a;
     SingularValueDecomposition svd;
+    
+    public SVD(){
+        
+    }
 
     public SVD(double[][] array) {
         a=new Matrix(array);

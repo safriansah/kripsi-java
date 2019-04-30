@@ -40,7 +40,7 @@ public class Koneksi {
     public ArrayList<Berita> getBeritaList(){
         ArrayList<Berita> beritaList = new ArrayList<>();
         try{
-            ResultSet srs = stm.executeQuery("SELECT * FROM tb_berita");
+            ResultSet srs = stm.executeQuery("SELECT * FROM tb_berita2 order by kategori asc");
             while(srs.next()){
                 Berita berita=new Berita(srs.getString("judul"), srs.getString("isi"), srs.getString("kategori"));
                 beritaList.add(berita);
