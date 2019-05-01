@@ -221,7 +221,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         }
         tfidf.setTerm(tokens);
         tokens=tfidf.getTerm();
-        jTextArea1.append("Jumlah term TF-IDF:\t"+tokens.size()+"\n");
+        jTextArea1.append("Jumlah term TF-IDF:\t"+tokens.size()+"\n\n");
         //for(String a:tokens) System.out.println(a);
         
         tfidf.setTfidf(dok);
@@ -355,7 +355,6 @@ public class KripsiGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(java.awt.Color.white);
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("logo.png")).getImage());
-        setMaximumSize(new java.awt.Dimension(1024, 768));
         setResizable(false);
 
         jPanel1.setBackground(java.awt.Color.white);

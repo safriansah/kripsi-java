@@ -14,7 +14,7 @@ import model.Berita;
  * @author safriansah
  */
 public class SVM {
-    double lamda=1, maxD=0, c=1, d=2, gamma=0.01, epsilon=0.001, maxDeltaAlpha=0, b;
+    double lamda=1, maxD=0, c=1, d=2, gamma=0.01, epsilon=0.001, maxDeltaAlpha=0, complex=1, b;
     double[] alpha, deltaAlpha, error, w;
     double[][] data, kernel, hessian;
     String[] kelas=new String[2];
@@ -120,7 +120,7 @@ public class SVM {
     
     public void setDeltaAlpha(){
         for(int i=0; i<deltaAlpha.length; i++){
-            deltaAlpha[i]=Math.min(Math.max(gamma*(1-error[i]), alpha[i]), c-alpha[i]);
+            deltaAlpha[i]=Math.min(Math.max(gamma*(1-error[i]), alpha[i]), complex-alpha[i]);
             alpha[i]+=deltaAlpha[i];
             maxDeltaAlpha=Math.max(maxDeltaAlpha, deltaAlpha[i]);
         }
