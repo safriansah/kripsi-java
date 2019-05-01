@@ -19,14 +19,15 @@ public class MulticlassSVM {
     SVM[] svm;
     String kelas[];
     ArrayList<Berita>[] training;
-    double d=2, lamda=1, gamma=0.01, complex=1, epsilon=0.001;
+    double cost=1, d=2, lamda=1, gamma=0.01, complex=1, epsilon=0.001;
     int iterasi=10;
     
     public MulticlassSVM(){
         
     }
     
-    public MulticlassSVM(double degree, double lamda, double gamma, double complexity, double epsilon, int iterasi){
+    public MulticlassSVM(double cost, double degree, double lamda, double gamma, double complexity, double epsilon, int iterasi){
+        this.cost=cost;
         this.d=degree;
         this.lamda=lamda;
         this.gamma=gamma;
@@ -81,7 +82,7 @@ public class MulticlassSVM {
         k=0;
         for(i=0; i<kelas.length; i++){
             for(j=i+1; j<kelas.length; j++){
-                svm[k]=new SVM(d, lamda, gamma, complex, epsilon, iterasi);
+                svm[k]=new SVM(cost, d, lamda, gamma, complex, epsilon, iterasi);
                 svm[k].train(training[i], training[j]);
                 k++;
             }

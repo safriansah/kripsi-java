@@ -43,7 +43,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     TFIDF tfidf;
     SVD svd;
     MulticlassSVM multi;
-    double d=2, lamda=1, gamma=0.01, complex=1, epsilon=0.001;
+    double cost=1, d=2, lamda=1, gamma=0.01, complex=1, epsilon=0.001;
     int iterasi=10;
         
     /**
@@ -97,6 +97,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     public boolean setParam(){
         boolean hasil=false;
         try{
+            cost=Double.parseDouble(txtCost.getText());
             d=Double.parseDouble(txtDegree.getText());
             lamda=Double.parseDouble(txtLambda.getText());
             gamma=Double.parseDouble(txtGamma.getText());
@@ -147,7 +148,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jTextArea1.append("\nHasil reduksi fitur SVD:\t"+tif[0].length+"\n\n");
         
         //proses training multiclass svm
-        multi=new MulticlassSVM(d, lamda, gamma, complex, epsilon, iterasi);
+        multi=new MulticlassSVM(cost, d, lamda, gamma, complex, epsilon, iterasi);
         multi.train(beritaList);
                 
         //proses testing multiclass svm
@@ -261,7 +262,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         }
         
         //proses training multiclass svm
-        multi=new MulticlassSVM(d, lamda, gamma, complex, epsilon, iterasi);
+        multi=new MulticlassSVM(cost, d, lamda, gamma, complex, epsilon, iterasi);
         multi.train(beritaList);
                 
         //proses testing multiclass svm
@@ -394,6 +395,8 @@ public class KripsiGUI extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        txtCost = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(java.awt.Color.white);
@@ -765,12 +768,30 @@ public class KripsiGUI extends javax.swing.JFrame {
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel12.setText("Iterasi");
 
+        jLabel13.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        jLabel13.setForeground(java.awt.Color.white);
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel13.setText("Cost");
+
+        txtCost.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCost.setText("1");
+        txtCost.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        txtCost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCostActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtCost, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtDegree)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
@@ -812,7 +833,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                     .addComponent(jLabel9)
                     .addComponent(jLabel10)
                     .addComponent(jLabel11)
-                    .addComponent(jLabel12))
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtDegree, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -820,7 +842,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                     .addComponent(txtGamma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtComplexity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEpsilon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtIterasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIterasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -877,7 +900,7 @@ public class KripsiGUI extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        if(beritaList.size()<28){
+        if(beritaList.size()<=56){
             JOptionPane.showMessageDialog(this,"Dataset tidak mencukupi");
             return;
         }
@@ -955,6 +978,10 @@ public class KripsiGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDegreeActionPerformed
 
+    private void txtCostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCostActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCostActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1006,6 +1033,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1027,6 +1055,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField txtComplexity;
+    private javax.swing.JTextField txtCost;
     private javax.swing.JTextField txtDegree;
     private javax.swing.JTextField txtEpsilon;
     private javax.swing.JTextField txtGamma;

@@ -26,7 +26,8 @@ public class SVM {
         
     }
     
-    public SVM(double degree, double lamda, double gamma, double complexity, double epsilon, int iterasi){
+    public SVM(double cost, double degree, double lamda, double gamma, double complexity, double epsilon, int iterasi){
+        this.c=cost;
         this.d=degree;
         this.lamda=lamda;
         this.gamma=gamma;
@@ -185,7 +186,7 @@ public class SVM {
         //System.out.println(Arrays.toString(w));
         //System.out.println(data.length);
         double sign=perkalianMatrix(testKernel, w)+b;
-        if(sign>0) hasil=kelas[1];
+        if(sign>=0) hasil=kelas[1];
         else hasil=kelas[0];
         //System.out.println(kelas[0]+" : "+kelas[1]+" = "+hasil);
         return hasil;
