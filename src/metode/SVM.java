@@ -26,6 +26,15 @@ public class SVM {
         
     }
     
+    public SVM(double degree, double lamda, double gamma, double complexity, double epsilon, int iterasi){
+        this.d=degree;
+        this.lamda=lamda;
+        this.gamma=gamma;
+        this.complex=complexity;
+        this.epsilon=epsilon;
+        this.maxIterasi=iterasi;
+    }
+    
     public void train(ArrayList<Berita> train1, ArrayList<Berita> train2){
         dataBerita.addAll(train1);
         dataBerita.addAll(train2);

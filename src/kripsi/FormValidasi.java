@@ -76,15 +76,19 @@ public class FormValidasi extends javax.swing.JFrame {
         setMaximumSize(new java.awt.Dimension(512, 768));
         setResizable(false);
 
-        jPanel1.setBackground(java.awt.Color.white);
+        jPanel1.setBackground(new java.awt.Color(240, 240, 240));
+        jPanel1.setToolTipText("");
         jPanel1.setMaximumSize(new java.awt.Dimension(512, 768));
         jPanel1.setMinimumSize(new java.awt.Dimension(512, 768));
         jPanel1.setPreferredSize(new java.awt.Dimension(512, 768));
 
+        jPanel2.setBackground(new java.awt.Color(51, 153, 255));
+        jPanel2.setToolTipText("");
         jPanel2.setMaximumSize(new java.awt.Dimension(512, 32767));
         jPanel2.setPreferredSize(new java.awt.Dimension(512, 105));
 
         jLabel1.setFont(new java.awt.Font("Open Sans", 1, 24)); // NOI18N
+        jLabel1.setForeground(java.awt.Color.white);
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Form Validasi");
 
@@ -123,7 +127,7 @@ public class FormValidasi extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextArea1);
 
         jButton1.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
-        jButton1.setText("Kategori:");
+        jButton1.setText("Kategori");
         jButton1.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,7 +174,7 @@ public class FormValidasi extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -184,8 +188,9 @@ public class FormValidasi extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
