@@ -44,7 +44,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     SVD svd;
     MulticlassSVM multi;
     double cost=1, d=2, lamda=1, gamma=0.01, complex=1, epsilon=0.001;
-    int iterasi=10;
+    int iterasi=10, rank=100;
         
     /**
      * Creates new form KripsiView
@@ -104,7 +104,10 @@ public class KripsiGUI extends javax.swing.JFrame {
             complex=Double.parseDouble(txtComplexity.getText());
             epsilon=Double.parseDouble(txtEpsilon.getText());
             iterasi=Integer.parseInt(txtIterasi.getText());
+            rank=Integer.parseInt(txtRank.getText());
             hasil=true;
+            if(rank<1 || rank>100) hasil=false;
+            
         }
         catch(Exception ex){
             
@@ -140,12 +143,15 @@ public class KripsiGUI extends javax.swing.JFrame {
         }*/
         
         svd=new SVD(tif);
+        int k=svd.getV()[0].length*rank/100;
+        svd.setRank(k);
         tif=svd.getV();
         for(i=0; i<beritaList.size(); i++){
             beritaList.get(i).setSvd(tif[i]);
             //System.out.println(Arrays.toString(tif[i]));
         }
-        jTextArea1.append("\nHasil reduksi fitur SVD:\t"+tif[0].length+"\n\n");
+        jTextArea1.append("\nHasil reduksi fitur SVD:\t"+tif[0].length);
+        jTextArea1.append("\nPenggunaan K-rank SVD:\t"+rank+"%\n\n");
         
         //proses training multiclass svm
         multi=new MulticlassSVM(cost, d, lamda, gamma, complex, epsilon, iterasi);
@@ -397,6 +403,8 @@ public class KripsiGUI extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtCost = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        txtRank = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(java.awt.Color.white);
@@ -782,6 +790,22 @@ public class KripsiGUI extends javax.swing.JFrame {
             }
         });
 
+        jLabel15.setFont(new java.awt.Font("Open Sans", 1, 12)); // NOI18N
+        jLabel15.setForeground(java.awt.Color.white);
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel15.setText("SVD K-rank %");
+
+        txtRank.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtRank.setText("100");
+        txtRank.setToolTipText("");
+        txtRank.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        txtRank.setName(""); // NOI18N
+        txtRank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtRankActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -815,8 +839,12 @@ public class KripsiGUI extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtIterasi)
                     .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtRank))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+            .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -824,7 +852,7 @@ public class KripsiGUI extends javax.swing.JFrame {
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -834,7 +862,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                     .addComponent(jLabel10)
                     .addComponent(jLabel11)
                     .addComponent(jLabel12)
-                    .addComponent(jLabel13))
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtDegree, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -843,7 +872,8 @@ public class KripsiGUI extends javax.swing.JFrame {
                     .addComponent(txtComplexity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEpsilon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtIterasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtRank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -982,6 +1012,10 @@ public class KripsiGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCostActionPerformed
 
+    private void txtRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRankActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtRankActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1034,6 +1068,7 @@ public class KripsiGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1061,5 +1096,6 @@ public class KripsiGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtGamma;
     private javax.swing.JTextField txtIterasi;
     private javax.swing.JTextField txtLambda;
+    private javax.swing.JTextField txtRank;
     // End of variables declaration//GEN-END:variables
 }
